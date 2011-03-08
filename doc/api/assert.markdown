@@ -1,82 +1,85 @@
-## Assert
+## Assertions
 
-This module is used for writing unit tests for your applications, you can
-access it with `require('assert')`.
+Ce module est utilisé pour écrire des tests unitaires pour vos applications.
+Vous pouvez y accéder avec `require('assert')`.
 
 ### assert.fail(actual, expected, message, operator)
 
-Tests if `actual` is equal to `expected` using the operator provided.
+Teste si `actual` est égal  à `expected` en utilisant l'`operator` donné
 
 ### assert.ok(value, [message])
 
-Tests if value is a `true` value, it is equivalent to `assert.equal(true, value, message);`
+Teste si la valeur `value` est `true`. Ceci est équivalent à
+`assert.equal(true, value, message)`.
 
 ### assert.equal(actual, expected, [message])
 
-Tests shallow, coercive equality with the equal comparison operator ( `==` ).
+Teste l'égalité superficielle avec l'opérateur `==`.
 
 ### assert.notEqual(actual, expected, [message])
 
-Tests shallow, coercive non-equality with the not equal comparison operator ( `!=` ).
+Teste l'inégalité superficielle avec l'opérateur `!=`.
 
 ### assert.deepEqual(actual, expected, [message])
 
-Tests for deep equality.
+Teste l'égalité profonde.
 
 ### assert.notDeepEqual(actual, expected, [message])
 
-Tests for any deep inequality.
+Teste l'inégalité profonde.
 
 ### assert.strictEqual(actual, expected, [message])
 
-Tests strict equality, as determined by the strict equality operator ( `===` )
+Teste l'égalité stricte avec l'opérateur `===`.
 
 ### assert.notStrictEqual(actual, expected, [message])
 
-Tests strict non-equality, as determined by the strict not equal operator ( `!==` )
+Teste l'inégalité stricte avec l'opérateur `!==`.
 
 ### assert.throws(block, [error], [message])
 
-Expects `block` to throw an error. `error` can be constructor, regexp or 
-validation function.
+S'attend à ce que `block` provoque une erreur. `error` peut être un 
+constructeur, une epression régulière ou une fonction de validation
 
-Validate instanceof using constructor:
+Validation de `instanceof` en utilisant un constructeur :
 
     assert.throws(
       function() {
-        throw new Error("Wrong value");
+        throw new Error("Lauvaise valeur");
       },
       Error
     );
 
-Validate error message using RegExp:
+Validation du message d'erreur en utilisant une regex :
 
     assert.throws(
       function() {
-        throw new Error("Wrong value");
+        throw new Error("Mauvaise valeur");
       },
-      /value/
+      /valeur/
     );
 
-Custom error validation:
+Validation d'erreur personnalisée :
 
     assert.throws(
       function() {
-        throw new Error("Wrong value");
+        throw new Error("Mauvaise valeur");
       },
       function(err) {
-        if ( (err instanceof Error) && /value/.test(err) ) {
+        if ( (err instanceof Error) && /valeur/.test(err) ) {
           return true;
         }
       },
-      "unexpected error"
+      "erreur inatendue"
     );
 
 ### assert.doesNotThrow(block, [error], [message])
 
-Expects `block` not to throw an error, see assert.throws for details.
+S'attend à ce que `block` ne provoque pas d'erreur. voir `assert.throws`
+pour plus de détails.
 
 ### assert.ifError(value)
 
-Tests if value is not a false value, throws if it is a true value. Useful when
-testing the first argument, `error` in callbacks.
+Teste si `value` n'est pas `false`, lance un exception si égale à `true`.
+Utile lorsque l'on teste le premier argument `erreur` dans les fonctions
+de rappel.
