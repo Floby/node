@@ -32,6 +32,6 @@
 @include os
 @include debugger
 
-# Appendices
+# Annexes
 @include appendix_1
 @include appendix_2
