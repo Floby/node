@@ -1,45 +1,47 @@
-## Buffers
+## Tampons mémoire
 
-Pure Javascript is Unicode friendly but not nice to binary data.  When
-dealing with TCP streams or the file system, it's necessary to handle octet
-streams. Node has several strategies for manipulating, creating, and
-consuming octet streams.
+Le JavaScript pur est très bon avec l'Unicode mais peine avec les données
+binaires. Quand on traîte des flux TCP ou le système de fichiers, il est
+nécéssaire de gérer les flux d'octets. Node dispose de plusieurs méthodes
+pour manipuler, créer et lire des flux binaires.
 
-Raw data is stored in instances of the `Buffer` class. A `Buffer` is similar
-to an array of integers but corresponds to a raw memory allocation outside
-the V8 heap. A `Buffer` cannot be resized.
+Les données binaires sont stockées dans des instance de la classe `Buffer`.
+Un `buffer` est similaire à un tableau d'entiers mais correspond aux données
+binaires allouée en dehors de la mémoire gérée par V8. On ne peut pas 
+changer la taille d'un `buffer`.
 
-The `Buffer` object is global.
+Le constructeur `Buffer` est global.
 
-Converting between Buffers and JavaScript string objects requires an explicit encoding
-method.  Here are the different string encodings;
+Convertir des tampons vers des chaînes de caractères JavaScript et vice 
+versa demande un encodage/décodage explicite. Les encodages sont les 
+suivants : 
 
-* `'ascii'` - for 7 bit ASCII data only.  This encoding method is very fast, and will
-strip the high bit if set.
+* `'ascii'` - pour les données ASCII à 7 bits seulements. Cette méthode
+d'encodage est très rapide et enlèvera le bit fort si présent.
 
-* `'utf8'` - Unicode characters.  Many web pages and other document formats use UTF-8.
+* `'utf8'` - Caractères Unicode. Beaucoup de pages web et d'autre formats de documents utilisent UTF-8.
 
-* `'base64'` - Base64 string encoding.
+* `'base64'` - encodage en Base64.
 
-* `'binary'` - A way of encoding raw binary data into strings by using only
-the first 8 bits of each character. This encoding method is depreciated and
-should be avoided in favor of `Buffer` objects where possible. This encoding
-will be removed in future versions of Node.
+* `'binary'` - Une méthode d'encodage spécifique à Node n'utilisant que les
+8 premiers bits de chaque caractère. Cette méthode est dépréciée et devrait
+être évitée en faveur d'objets `Buffer`. Elle sera retirée des prochaines
+versions de Node.
 
-* `'hex'` - Encode each byte as two hexidecimal characters.
+* `'hex'` - Encode chaque octet en deux caractères hexadécimaux.
 
 
 ### new Buffer(size)
 
-Allocates a new buffer of `size` octets.
+Alloue un nouveau `buffer` de taille `size` (en octets).
 
 ### new Buffer(array)
 
-Allocates a new buffer using an `array` of octets.
+Alloue un nouveau `buffer` en utilisant un tableau d'octets.
 
 ### new Buffer(str, encoding='utf8')
 
-Allocates a new buffer containing the given `str`.
+Alloue un nouveau `buffer` contenant la chaîne de caractère donnée par `str`.
 
 ### buffer.write(string, offset=0, encoding='utf8')
 
