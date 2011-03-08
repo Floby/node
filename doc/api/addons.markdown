@@ -1,39 +1,42 @@
-## Addons
+## Extensions
 
-Addons are dynamically linked shared objects. They can provide glue to C and
-C++ libraries. The API (at the moment) is rather complex, involving
-knowledge of several libraries:
+Les extensions sont des objets executables partagés dynamiquement
+(comme des .dll ou .so). Ils peuvent offrir la "glue" avec les bibliothèques
+C et C++. L'API (pour le moment) est plutôt complexe et implique une
+connaissance de plusieurs bibliothèques :
 
- - V8 JavaScript, a C++ library. Used for interfacing with JavaScript:
-   creating objects, calling functions, etc.  Documented mostly in the
-   `v8.h` header file (`deps/v8/include/v8.h` in the Node source tree).
+ - V8 JavaScript, une bibliothèque C++. Elle est utilisée pour l'interface
+   avec JavaScript : créer des objets, appeler des fonctions, etc. Elle
+   est principalement documentée dans son fichier d'en-tête `v8.h` 
+   trouvable à `/deps/v8/include/v8.h` dans les sources de Node.
 
- - libev, C event loop library. Anytime one needs to wait for a file
-   descriptor to become readable, wait for a timer, or wait for a signal to
-   received one will need to interface with libev.  That is, if you perform
-   any I/O, libev will need to be used.  Node uses the `EV_DEFAULT` event
-   loop.  Documentation can be found [here](http://cvs.schmorp.de/libev/ev.html).
+ - libev, une boucle d'évènements en C. Lorsqu'il y a besoin d'attendre
+   qu'un fichier soit lisible, attendre un compteur ou attendre un signal
+   il faut utiliser l'interface de libev. En bref, si vous faites
+   des entrées/sorties, vous devez utiliser libev. Node utilise la boucle
+   `EV_DEFAULT`. La documentation se trouve [ici](http://cvs.schmorp.de/libev/ev.html)
 
- - libeio, C thread pool library. Used to execute blocking POSIX system
-   calls asynchronously. Mostly wrappers already exist for such calls, in
-   `src/file.cc` so you will probably not need to use it. If you do need it,
-   look at the header file `deps/libeio/eio.h`.
+ - libeio, un reservoir de threads en C. Elle est utilisée pour que les appels
+   POSIX bloquants puissent être utilisés de manière asynchrone. Une couche
+   d'abstraction existe pour la plupart de ces appels dans `src/file.cc` ;
+   vous n'aurez alors sans doute pas à l'utiliser. Si vous en avez vraiment
+   besoin regardez le fichier d'en-tête `deps/libeio/eio.h`
 
- - Internal Node libraries. Most importantly is the `node::ObjectWrap`
-   class which you will likely want to derive from.
+ - Les bibliothèques internes de Node. La plus importante est la classe
+   `node::ObjectWrap` de laquelle vous pouvez faire hériter vos classes
 
- - Others. Look in `deps/` for what else is available.
+ - Autres. Regardez dans `deps/` pour voir ce qui est disponible
 
-Node statically compiles all its dependencies into the executable. When
-compiling your module, you don't need to worry about linking to any of these
-libraries.
+Node compile statiquement ses dépendences dans l'executable. Lorsque vous
+compilez votre extension, vous n'avez pas à vous préoccuper de lier ces
+bibliothèques.
 
-To get started let's make a small Addon which does the following except in
-C++:
+Pour se mettre en jambes, faisons une petite extensions qui fait ceci mais
+en C++ : 
 
-    exports.hello = 'world';
+    exports.coucou = 'salut';
 
-To get started we create a file `hello.cc`:
+Pour commencer, nous créons un fichier `coucou.cc` :
 
     #include <v8.h>
 
@@ -43,12 +46,12 @@ To get started we create a file `hello.cc`:
     init (Handle<Object> target)
     {
       HandleScope scope;
-      target->Set(String::New("hello"), String::New("world"));
+      target->Set(String::New("coucou"), String::New("salut"));
     }
 
-This source code needs to be built into `hello.node`, the binary Addon. To
-do this we create a file called `wscript` which is python code and looks
-like this:
+Ce code source doit être compilé en un fichier d'extension binaire
+`coucou.node`. Pour ce faire, nous devons créer un fichier `wscript` qui
+est du code python et ressemble à ceci :
 
     srcdir = '.'
     blddir = 'build'
@@ -63,18 +66,21 @@ like this:
 
     def build(bld):
       obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
-      obj.target = 'hello'
-      obj.source = 'hello.cc'
+      obj.target = 'coucou'
+      obj.source = 'coucou.cc'
 
-Running `node-waf configure build` will create a file
-`build/default/hello.node` which is our Addon.
+La commande `node-waf configure build` crée le fichier
+`build/default/coucou.node` qui est notre extension
 
-`node-waf` is just [WAF](http://code.google.com/p/waf), the python-based build system. `node-waf` is
-provided for the ease of users.
+`node-waf` n'est que [WAF](http://code.google.com/p/waf), le système de
+compilation en python. `node-waf` est disponible pour la facilité 
+d'utilisation
 
-All Node addons must export a function called `init` with this signature:
+
+Toutes les extensions doivent exporter une fonction nommée `init` avec
+ce prototype :
 
     extern 'C' void init (Handle<Object> target)
 
-For the moment, that is all the documentation on addons. Please see
-<http://github.com/joyent/node_postgres> for a real example.
+Pour l'instant, ceci est la seule documentation sur les extensions. Voir
+<http://github.com/joyent/node_postgres> pour un exemple réel.
