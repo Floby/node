@@ -1,23 +1,23 @@
-## Appendix 1 - Third Party Modules
+## Annexe 1 : Modules tiers
 
-There are many third party modules for Node. At the time of writing, August
-2010, the master repository of modules is
-[the wiki page](http://github.com/joyent/node/wiki/modules).
+Il existe beaucoup de modules tiers pour Node. Au moment de la rédaction
+de ceci (Août 2010), la liste principales des modules est
+[la page wiki](http://github.com/joyent/node/wiki/modules) (Anglais)
 
-This appendix is intended as a SMALL guide to new-comers to help them
-quickly find what are considered to be quality modules. It is not intended
-to be a complete list.  There may be better more complete modules found
-elsewhere.
+Cette annexe doit être vue comme un RAPIDE guide à destination des néophytes
+pour les aider à trouver des modules considérés de bonne qualité. Le but
+n'est pas pas d'en faire une liste exhaustive. Il peut exister d'autres
+modules, meilleurs ou plus complets autre part.
 
-- Module Installer: [npm](http://github.com/isaacs/npm)
+- Gestionnaire de modules : [npm](http://github.com/isaacs/npm)
 
-- HTTP Middleware: [Connect](http://github.com/senchalabs/connect)
+- Middleware HTTP : [Connect](http://github.com/senchalabs/connect)
 
-- Web Framework: [Express](http://github.com/visionmedia/express)
+- Framework Web : [Express](http://github.com/visionmedia/express)
 
-- Web Sockets: [Socket.IO](http://github.com/LearnBoost/Socket.IO-node)
+- Web Sockets : [Socket.IO](http://github.com/LearnBoost/Socket.IO-node)
 
-- HTML Parsing: [HTML5](http://github.com/aredridel/html5)
+- Analyse de HTML : [HTML5](http://github.com/aredridel/html5)
 
 - [mDNS/Zeroconf/Bonjour](http://github.com/agnat/node_mdns)
 
@@ -25,20 +25,19 @@ elsewhere.
 
 - [mysql](http://github.com/felixge/node-mysql)
 
-- Serialization: [msgpack](http://github.com/pgriess/node-msgpack)
+- Sérialisation : [msgpack](http://github.com/pgriess/node-msgpack)
 
 - Scraping: [Apricot](http://github.com/silentrob/Apricot)
 
-- Debugger: [ndb](http://github.com/smtlaissezfaire/ndb) is a CLI debugger
-  [inspector](http://github.com/dannycoates/node-inspector) is a web based
-  tool.
+- Déboguage: [ndb](http://github.com/smtlaissezfaire/ndb) est un débogueur en ligne de commande
+  [inspector](http://github.com/dannycoates/node-inspector) est un outil dans le navigateur
 
-- [pcap binding](http://github.com/mranney/node_pcap)
+- [bibliothèque pcap](http://github.com/mranney/node_pcap)
 
 - [ncurses](http://github.com/mscdex/node-ncurses)
 
-- Testing/TDD/BDD: [vows](http://vowsjs.org/),
+- Test/TDD/BDD: [vows](http://vowsjs.org/),
   [expresso](http://github.com/visionmedia/expresso),
   [mjsunit.runner](http://github.com/tmpvar/mjsunit.runner)
 
-Patches to this list are welcome.
+Les ajouts à cette liste sont les bienvenus
