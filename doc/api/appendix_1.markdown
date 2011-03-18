@@ -21,7 +21,7 @@ modules, meilleurs ou plus complets autre part.
 
 - [mDNS/Zeroconf/Bonjour](http://github.com/agnat/node_mdns)
 
-- [RabbitMQ, AMQP](http://github.com/joyent/node-amqp)
+- [RabbitMQ, AMQP](https://github.com/ry/node-amqp)
 
 - [mysql](http://github.com/felixge/node-mysql)
 
