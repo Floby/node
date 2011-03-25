@@ -21,6 +21,11 @@ d'encodage est très rapide et enlèvera le bit fort si présent.
 
 * `'utf8'` - Caractères Unicode. Beaucoup de pages web et d'autre formats de documents utilisent UTF-8.
 
+* `'ucs2'` - 2-bytes, little endian encoded Unicode characters. It can encode
+only BMP(Basic Multilingual Plane, U+0000 - U+FFFF).
+* `'usc2'` - Caractères sur deux octets petit-boutistes (little endian). Ne peux décoder
+que les BMP(Basic Multilingual Plane, de U+0000 à U+FFFF)
+
 * `'base64'` - encodage en Base64.
 
 * `'binary'` - Une méthode d'encodage spécifique à Node n'utilisant que les
