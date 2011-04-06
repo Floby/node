@@ -21,8 +21,6 @@ d'encodage est très rapide et enlèvera le bit fort si présent.
 
 * `'utf8'` - Caractères Unicode. Beaucoup de pages web et d'autre formats de documents utilisent UTF-8.
 
-* `'ucs2'` - 2-bytes, little endian encoded Unicode characters. It can encode
-only BMP(Basic Multilingual Plane, U+0000 - U+FFFF).
 * `'usc2'` - Caractères sur deux octets petit-boutistes (little endian). Ne peux décoder
 que les BMP(Basic Multilingual Plane, de U+0000 à U+FFFF)
 
@@ -32,6 +30,9 @@ que les BMP(Basic Multilingual Plane, de U+0000 à U+FFFF)
 8 premiers bits de chaque caractère. Cette méthode est dépréciée et devrait
 être évitée en faveur d'objets `Buffer`. Elle sera retirée des prochaines
 versions de Node.
+
+* `'hex'` - Encode chaque octet en deux caractères hexadécimaux.
+
 
 * `'hex'` - Encode chaque octet en deux caractères hexadécimaux.
 
@@ -60,8 +61,6 @@ Example: write a utf8 string into a buffer, then print it
     buf = new Buffer(256);
     len = buf.write('\u00bd + \u00bc = \u00be', 0);
     console.log(len + " bytes: " + buf.toString('utf8', 0, len));
-
-    // 12 bytes: ½ + ¼ = ¾
 
 
 ### buffer.toString(encoding, start=0, end=buffer.length)
