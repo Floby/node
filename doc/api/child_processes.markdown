@@ -1,61 +1,61 @@
 ## Child Processes
 
-Node provides a tri-directional `popen(3)` facility through the `ChildProcess`
-class.
+Node expose un `popen(3)` tridirectionnel à travers la classe `ChildProcess`
 
-It is possible to stream data through the child's `stdin`, `stdout`, and
-`stderr` in a fully non-blocking way.
+Il est possible de manipuler les flux `stdin`, `stdout` et `stderr` du
+processus enfant d'une manière complètement non-bloquante
 
-To create a child process use `require('child_process').spawn()`.
+Pour créer un processus fils, il faut utiliser `require('child_process').spawn()`
 
-Child processes always have three streams associated with them. `child.stdin`,
-`child.stdout`, and `child.stderr`.
+Les processus fils ont toujours trois flux qui leur sont associés. `child.stdin`,
+`child.stdout` et `child.stderr`.
 
-`ChildProcess` is an `EventEmitter`.
+`ChildProcess` est un emetteur de la classe `EventEmitter`
 
-### Event:  'exit'
+### Evènement:  'exit'
 
 `function (code, signal) {}`
 
-This event is emitted after the child process ends. If the process terminated
-normally, `code` is the final exit code of the process, otherwise `null`. If
-the process terminated due to receipt of a signal, `signal` is the string name
-of the signal, otherwise `null`.
+Cet évènement est émis lorsque le processus fils termine. Si le processus s'est
+terminé normalement, `code` est le code de retour du processus, sinon `null`.
+Si le processus s'est terminé suite à la réception d'un signal, `signal` est le 
+nom de ce signal, sinon `null`
 
-See `waitpid(2)`.
+voir `waitpid(2)`.
 
 ### child.stdin
 
-A `Writable Stream` that represents the child process's `stdin`.
-Closing this stream via `end()` often causes the child process to terminate.
+Un flux en écriture qui représente l'entrée standard `stdin` du processus fils.
+Fermer ce flux avec `end()` provoque souvent la temrinaison du processus fils.
 
 ### child.stdout
 
-A `Readable Stream` that represents the child process's `stdout`.
+Un flux en lecture qui représente la sortie standard `stdout` du processus fils.
 
 ### child.stderr
 
-A `Readable Stream` that represents the child process's `stderr`.
+Un flux en lecture qui représente la sortie d'erreurs `stderr` du processus fils.
 
 ### child.pid
 
-The PID of the child process.
+L'identifiant du processus fils.
 
-Example:
+Exemple:
 
     var spawn = require('child_process').spawn,
         grep  = spawn('grep', ['ssh']);
 
-    console.log('Spawned child pid: ' + grep.pid);
+    console.log('Lancé processus fils : ' + grep.pid);
     grep.stdin.end();
 
 
-### child_process.spawn(command, args=[], [options])
+### child_process.spawn(commande, args=[], [options])
 
-Launches a new process with the given `command`, with  command line arguments in `args`.
-If omitted, `args` defaults to an empty Array.
+Lance un nouveau processus avec la `commande` donnée et `args` comme arguments.
+Si omis, `args` est égal à un tableau vide.
 
-The third argument is used to specify additional options, which defaults to:
+Le troisième argument est utilisé pour des options avancées, dont les valeurs
+par défaut sont :
 
     { cwd: undefined,
       env: process.env,
@@ -63,13 +63,13 @@ The third argument is used to specify additional options, which defaults to:
       setsid: false
     }
 
-`cwd` allows you to specify the working directory from which the process is spawned.
-Use `env` to specify environment variables that will be visible to the new process.
-With `customFds` it is possible to hook up the new process' [stdin, stout, stderr] to
-existing streams; `-1` means that a new stream should be created. `setsid`,
-if set true, will cause the subprocess to be run in a new session.
+`cwd` permet de spécifier le repertoire de travail dans lequel le processus sera lancé.
+`env` permet de spécifier des variables d'environnement additionnelle pour le processus fils.
+Avec `customFds`, il est possible de 'brancher' les entrées et sorties standard du  processus
+fils sur des flux existants. -1 signifie qu'un nouveau flux doit être créé.
+`setsid`, si `true` permet de lancer le processus fils dans une nouvelle session.
 
-Example of running `ls -lh /usr`, capturing `stdout`, `stderr`, and the exit code:
+Exemple : lancer `ls -lh /usr` en récupérant `stdout`, `stderr` et le code de retour
 
     var util  = require('util'),
         spawn = require('child_process').spawn,
@@ -84,11 +84,11 @@ Example of running `ls -lh /usr`, capturing `stdout`, `stderr`, and the exit cod
     });
 
     ls.on('exit', function (code) {
-      console.log('child process exited with code ' + code);
+      console.log("le processus fils s'est terminé avec le code " + code);
     });
 
 
-Example: A very elaborate way to run 'ps ax | grep ssh'
+Exemple : une version capillotractée de `ps ax | grep ssh`
 
     var util  = require('util'),
         spawn = require('child_process').spawn,
@@ -105,7 +105,7 @@ Example: A very elaborate way to run 'ps ax | grep ssh'
 
     ps.on('exit', function (code) {
       if (code !== 0) {
-        console.log('ps process exited with code ' + code);
+        console.log("ps s'est terminé avec le code " + code);
       }
       grep.stdin.end();
     });
@@ -120,50 +120,52 @@ Example: A very elaborate way to run 'ps ax | grep ssh'
 
     grep.on('exit', function (code) {
       if (code !== 0) {
-        console.log('grep process exited with code ' + code);
+        console.log("grep s'est terminé avec le code " + code);
       }
     });
 
 
-Example of checking for failed exec:
+Exemple : verifier si un processus s'est terminé correctement
 
     var spawn = require('child_process').spawn,
-        child = spawn('bad_command');
+        child = spawn('mauvaise_commande');
 
     child.stderr.setEncoding('utf8');
     child.stderr.on('data', function (data) {
       if (/^execvp\(\)/.test(data)) {
-        console.log('Failed to start child process.');
+        console.log('Impossible de démarrer le processus fils');
       }
     });
 
 
-See also: `child_process.exec()`
+voir aussi : `child_process.exec()`
 
-### child_process.exec(command, [options], callback)
+### child_process.exec(commande, [options], callback)
 
-High-level way to execute a command as a child process, buffer the
-output, and return it all in a callback.
+Fonction de haut niveau permettant d'éxecuter une commande par un
+processus fils, mettre les sorties en tampon mémoire et d'appeler
+une fonction de rappel.
 
     var util = require('util'),
         exec = require('child_process').exec,
         child;
 
-    child = exec('cat *.js bad_file | wc -l',
-      function (error, stdout, stderr) {
+    child = exec('cat *.js mauvais_fichier | wc -l',
+      function (erreur, stdout, stderr) {
         console.log('stdout: ' + stdout);
         console.log('stderr: ' + stderr);
-        if (error !== null) {
-          console.log('exec error: ' + error);
+        if (erreur !== null) {
+          console.log('erreur avec exec : ' + erreur);
         }
     });
 
-The callback gets the arguments `(error, stdout, stderr)`. On success, `error`
-will be `null`.  On error, `error` will be an instance of `Error` and `err.code`
-will be the exit code of the child process, and `err.signal` will be set to the
-signal that terminated the process.
+La fonction de rappel reçoit les arguments `(erreur, stdout, stderr)`. en cas de succès,
+`erreur` est `null`. En cas d'échec, `erreur` est de la classe `Error` et `erreur.code`
+contient le code de retour du processus fils ; `erreur.signal` est le signal qui a causé
+la terminaison du processus.
 
-There is a second optional argument to specify several options. The default options are
+Le second argument est optionnel et permet de spécifier plusieurs options dont les valeurs
+par défaut sont :
 
     { encoding: 'utf8',
       timeout: 0,
@@ -172,29 +174,29 @@ There is a second optional argument to specify several options. The default opti
       cwd: null,
       env: null }
 
-If `timeout` is greater than 0, then it will kill the child process
-if it runs longer than `timeout` milliseconds. The child process is killed with
-`killSignal` (default: `'SIGTERM'`). `maxBuffer` specifies the largest
-amount of data allowed on stdout or stderr - if this value is exceeded then
-the child process is killed.
+Si `timeout` est plus grand que 0, alors le processus fils sera tué s'il met plus
+que `timeout` millisecondes à s'éxecuter. Le processus fils se voit alors envoyer le signal
+`killSignal`.
+`maxBuffer` est la plus grande quantité de données pouvant être mise en tampon pour `stderr` et `stdout`.
+Si cette valeur est dépassée, le processus fils sera tué.
 
 
 ### child.kill(signal='SIGTERM')
 
-Send a signal to the child process. If no argument is given, the process will
-be sent `'SIGTERM'`. See `signal(7)` for a list of available signals.
+Envoie un signal au processus fils. Sans arguement, le signal `'SIGTERM'` est envoyé.
+voir `singal(7)` pour une liste détaillées des signaux.
 
     var spawn = require('child_process').spawn,
         grep  = spawn('grep', ['ssh']);
 
     grep.on('exit', function (code, signal) {
-      console.log('child process terminated due to receipt of signal '+signal);
+      console.log('processus fils terminé après reception du signal '+signal);
     });
 
-    // send SIGHUP to process
+    // envoi du signal SIGHUP
     grep.kill('SIGHUP');
 
-Note that while the function is called `kill`, the signal delivered to the child
-process may not actually kill it.  `kill` really just sends a signal to a process.
+Il est à noter que la fonction `kill` (tuer en anglais) ne tue pas nécéssairement
+le processus fils. Elle envoie seulement un signal au processus.
 
-See `kill(2)`
+voir `kill(2)`
