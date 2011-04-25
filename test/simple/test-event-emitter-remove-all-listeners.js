@@ -21,41 +21,23 @@
 
 var common = require('../common');
 var assert = require('assert');
-var os = require('os');
+var events = require('events');
 
 
-var hostname = os.hostname()
-console.log("hostname = %s", hostname);
-assert.ok(hostname.length > 0);
+function listener() {}
 
-var uptime = os.uptime();
-console.log("uptime = %d", uptime);
-assert.ok(uptime > 0);
-
-var cpus = os.cpus();
-console.log("cpus = ", cpus);
-assert.ok(cpus.length > 0);
-
-var type = os.type();
-console.log("type = ", type);
-assert.ok(type.length > 0);
-
-var release = os.release();
-console.log("release = ", release);
-assert.ok(release.length > 0);
-
-if (process.platform != 'sunos') {
-  // not implemeneted yet
-  assert.ok(os.loadavg().length > 0);
-  assert.ok(os.freemem() > 0);
-  assert.ok(os.totalmem() > 0);
-}
+var e1 = new events.EventEmitter();
+e1.addListener('foo', listener);
+e1.addListener('bar', listener);
+e1.removeAllListeners('foo');
+assert.deepEqual([], e1.listeners('foo'));
+assert.deepEqual([listener], e1.listeners('bar'));
 
 
-var interfaces = os.getNetworkInterfaces();
-console.error(interfaces);
-switch (process.platform) {
-  case 'linux':
-    assert.equal('127.0.0.1', interfaces.lo.ip);
-    break;
-}
+var e2 = new events.EventEmitter();
+e2.addListener('foo', listener);
+e2.addListener('bar', listener);
+e2.removeAllListeners();
+console.error(e2);
+assert.deepEqual([], e2.listeners('foo'));
+assert.deepEqual([], e2.listeners('bar'));
