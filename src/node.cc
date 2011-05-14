@@ -21,6 +21,8 @@
 
 #include <node.h>
 
+#include <uv.h>
+
 #include <v8-debug.h>
 #include <node_dtrace.h>
 
@@ -111,9 +113,9 @@ static bool cov = false;
 static int debug_port=5858;
 static int max_stack_size = 0;
 
-static ev_check check_tick_watcher;
-static ev_prepare prepare_tick_watcher;
-static ev_idle tick_spinner;
+static uv_handle_t check_tick_watcher;
+static uv_handle_t prepare_tick_watcher;
+static uv_handle_t tick_spinner;
 static bool need_tick_cb;
 static Persistent<String> tick_callback_sym;
 
@@ -200,6 +202,12 @@ static void Check(EV_P_ ev_check *watcher, int revents) {
 }
 
 
+static void Spin(uv_handle_t* handle, int status) {
+  assert(handle == &tick_spinner);
+  assert(status == 0);
+}
+
+
 static Handle<Value> NeedTickCallback(const Arguments& args) {
   HandleScope scope;
   need_tick_cb = true;
@@ -208,14 +216,8 @@ static Handle<Value> NeedTickCallback(const Arguments& args) {
   // there is nothing left to do in the event loop and libev will exit. The
   // ev_prepare callback isn't called before exiting. Thus we start this
   // tick_spinner to keep the event loop alive long enough to handle it.
-  ev_idle_start(EV_DEFAULT_UC_ &tick_spinner);
+  uv_idle_start(&tick_spinner, Spin);
   return Undefined();
-}
-
-
-static void Spin(EV_P_ ev_idle *watcher, int revents) {
-  assert(watcher == &tick_spinner);
-  assert(revents == EV_IDLE);
 }
 
 
@@ -224,7 +226,7 @@ static void Tick(void) {
   if (!need_tick_cb) return;
 
   need_tick_cb = false;
-  ev_idle_stop(EV_DEFAULT_UC_ &tick_spinner);
+  uv_idle_stop(&tick_spinner);
 
   HandleScope scope;
 
@@ -248,16 +250,16 @@ static void Tick(void) {
 }
 
 
-static void PrepareTick(EV_P_ ev_prepare *watcher, int revents) {
-  assert(watcher == &prepare_tick_watcher);
-  assert(revents == EV_PREPARE);
+static void PrepareTick(uv_handle_t* handle, int status) {
+  assert(handle == &prepare_tick_watcher);
+  assert(status == 0);
   Tick();
 }
 
 
-static void CheckTick(EV_P_ ev_check *watcher, int revents) {
-  assert(watcher == &check_tick_watcher);
-  assert(revents == EV_CHECK);
+static void CheckTick(uv_handle_t* handle, int status) {
+  assert(handle == &check_tick_watcher);
+  assert(status == 0);
   Tick();
 }
 
@@ -2354,15 +2356,15 @@ char** Init(int argc, char *argv[]) {
   ev_default_loop(EVFLAG_AUTO);
 #endif
 
-  ev_prepare_init(&node::prepare_tick_watcher, node::PrepareTick);
-  ev_prepare_start(EV_DEFAULT_UC_ &node::prepare_tick_watcher);
-  ev_unref(EV_DEFAULT_UC);
+  uv_prepare_init(&node::prepare_tick_watcher, NULL, NULL);
+  uv_prepare_start(&node::prepare_tick_watcher, PrepareTick);
+  uv_unref();
 
-  ev_check_init(&node::check_tick_watcher, node::CheckTick);
-  ev_check_start(EV_DEFAULT_UC_ &node::check_tick_watcher);
-  ev_unref(EV_DEFAULT_UC);
+  uv_check_init(&node::check_tick_watcher, NULL, NULL);
+  uv_check_start(&node::check_tick_watcher, node::CheckTick);
+  uv_unref();
 
-  ev_idle_init(&node::tick_spinner, node::Spin);
+  uv_idle_init(&node::tick_spinner, NULL, NULL);
 
   ev_check_init(&node::gc_check, node::Check);
   ev_check_start(EV_DEFAULT_UC_ &node::gc_check);
@@ -2437,7 +2439,17 @@ void EmitExit(v8::Handle<v8::Object> process) {
 }
 
 
+uv_buf UVAlloc(uv_handle_t* handle, size_t suggested_size) {
+  char* base = (char*)malloc(suggested_size);
+  uv_buf buf;
+  buf.base = base;
+  buf.len = suggested_size;
+  return buf;
+}
+
+
 int Start(int argc, char *argv[]) {
+  uv_init(UVAlloc);
   v8::V8::Initialize();
   v8::HandleScope handle_scope;
 
@@ -2462,7 +2474,7 @@ int Start(int argc, char *argv[]) {
   // there are no watchers on the loop (except for the ones that were
   // ev_unref'd) then this function exits. As long as there are active
   // watchers, it blocks.
-  ev_loop(EV_DEFAULT_UC_ 0);
+  uv_run();
 
   EmitExit(process);
 
